@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} — Market.kg</title>
+    <link href="https://cloudflare.com" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #e0f2f1 0%, #f4f6f7 100%); font-family: -apple-system, sans-serif; min-height: 100vh; }
+        .navbar-market { background-color: #005f73; padding: 15px 0; }
+        .logo-text { color: #fff; font-weight: 800; font-size: 28px; text-decoration: none; }
+        .logo-text span { color: #ee9b00; }
+        .detail-card { border: none; border-radius: 16px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; }
+        .img-box { background: #fafafa; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #f1f3f5; }
+        .product-img-large { max-width: 100%; max-height: 400px; object-fit: contain; }
+        .price-text { color: #d90429; font-size: 32px; font-weight: bold; }
+        .btn-seller-whatsapp { background-color: #25d366; color: white; font-weight: bold; font-size: 18px; border: none; padding: 14px 25px; border-radius: 8px; width: 100%; display: inline-block; text-align: center; text-decoration: none; }
+        .btn-admin-whatsapp { background-color: #0077b6; color: white; font-weight: bold; font-size: 16px; border: none; padding: 12px 25px; border-radius: 8px; width: 100%; display: inline-block; text-align: center; text-decoration: none; }
+        .seller-box { background-color: #f8f9fa; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef; }
+        .spec-table { width: 100%; margin-bottom: 25px; }
+        .spec-table tr { border-bottom: 1px dashed #e0e5e6; }
+        .spec-table td { padding: 10px 5px; font-size: 16px; }
+        .spec-label { color: #8d99ae; font-weight: 500; }
+        .spec-value { color: #2b2d42; font-weight: 700; text-align: right; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-market shadow-sm mb-5">
+        <div class="container">
+            <a class="logo-text" href="/">Market<span>.kg</span></a>
+            <a href="/" class="btn btn-outline-light btn-sm fw-bold">← Башкы бет</a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+
+        <!-- Ката кетсе билдирүү чыгаруу -->
+        {% if error_delete %}
+            <div class="alert alert-danger text-center fw-bold rounded-3 mb-4 shadow-sm">{{ error_delete }}</div>
+        {% endif %}
+
+        <div class="card detail-card p-4 p-md-5">
+            <div class="row g-5">
+
+                <div class="col-lg-6">
+                    <div class="img-box shadow-sm mb-4">
+                        {% if product.image %} <img src="{{ product.image.url }}" class="product-img-large" alt="{{ product.name }}">
+                        {% else %} <img src="https://placeholder.com" class="product-img-large" alt="Сүрөт жок"> {% endif %}
+                    </div>
+
+                    <!-- Жаңы Башкаруу Бөлүмү (Өчүрүү жана Оңдоо) -->
+                    <div class="p-3 bg-light rounded-3 border">
+                        <h6 class="fw-bold text-secondary mb-3">🛠️ Жарыяны башкаруу:</h6>
+                        <div class="d-flex gap-2">
+                            <!-- Түзөтүү баскычы -->
+                            <a href="{% url 'edit_listing' product.id %}" class="btn btn-warning fw-bold text-white w-50 py-2">✏️ Өзгөртүү</a>
+
+                            <!-- Өчүрүү баскычы (Терезе ачат) -->
+                            <button class="btn btn-danger fw-bold w-50 py-2" onclick="javascript:document.getElementById('deleteSecureModal').style.display='block';">❌ Өчүрүү</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <span class="badge bg-secondary mb-2" style="font-size: 13px;">{{ product.category.name }}</span>
+                    <h1 class="fw-bold text-dark mb-2" style="font-size: 30px;">{{ product.name }}</h1>
+                    <div class="price-text mb-4">{{ product.price }} сом</div>
+
+                    {% if product.dynamic_properties %}
+                        <h6 class="fw-bold text-secondary mb-3">Жарыянын толук мүнөздөмөлөрү:</h6>
+                        <table class="spec-table">
+                            {% for label, value in product.dynamic_properties.items %}
+                                <tr>
+                                    <td class="spec-label">{{ label }}</td>
+                                    <td class="spec-value">{{ value }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+
+                    <div class="seller-box mb-4">
+                        <h6 class="fw-bold text-muted small mb-3">Жарыянын маалыматтары:</h6>
+                        <div class="mb-2">👤 <strong>Сатуучу:</strong> {{ product.seller_name }}</div>
+                        <div class="mb-2">📍 <strong>Жайгашкан жери:</strong> {{ product.location }}</div>
+                        <div>📞 <strong>Телефон номери:</strong> {{ product.seller_phone }}</div>
+                    </div>
+
+                    <a href="#" id="sellerWhatsappLink" target="_blank" class="btn-seller-whatsapp shadow-sm mb-3">💬 Сатуучуга WhatsApp аркылуу жазуу</a>
+                    <a href="#" id="adminWhatsappLink" target="_blank" class="btn-admin-whatsapp shadow-sm mb-4">🛠️ Администратор менен байланышуу</a>
+
+                    <hr>
+                    <h5 class="fw-bold text-secondary mb-3">Кошумча сүрөттөмөсү:</h5>
+                    <p class="text-dark fs-5 lh-base" style="white-space: pre-line;">{{ product.description }}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- КООПСУЗ ӨЧҮРҮҮ ҮЧҮН КАЛКЫП ЧЫГЫШ ТЕРЕЗЕСИ -->
+    <div id="deleteSecureModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; padding-top:150px;">
+        <div class="card p-4 mx-auto shadow-lg" style="max-width:400px; border-radius:12px;">
+            <h5 class="fw-bold text-danger mb-3">⚠️ Жарыяны өчүрүү</h5>
+            <p class="text-muted small">Коопсуздук үчүн жарыяны кошууда жазган телефон номериңизди киргизиңиз:</p>
+
+            <form action="{% url 'delete_listing' product.id %}" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input type="tel" name="check_phone" class="form-control border-2" placeholder="Мисалы: 0707123456" required>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger fw-bold w-50">Ырастоо ❌</button>
+                    <button type="button" class="btn btn-secondary fw-bold w-50" onclick="javascript:document.getElementById('deleteSecureModal').style.display='none';">Жок</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let productName = "{{ product.name }}";
+            let productPrice = "{{ product.price }}";
+
+            let rawSellerPhone = "{{ product.seller_phone }}".trim();
+            let cleanSellerPhone = rawSellerPhone.replace(/[^0-9]/g, '');
+            if (cleanSellerPhone.startsWith('0')) { cleanSellerPhone = '996' + cleanSellerPhone.substring(1); }
+            let sellerText = encodeURIComponent("Саламатсызбы! Мен сиздин Market.kg сайтындагы '" + productName + "' деген жарыяңыз боюнча жазып жатам.");
+            document.getElementById('sellerWhatsappLink').href = "https://wa.me" + cleanSellerPhone + "?text=" + sellerText;
+
+            let adminPhone = "996555104550";
+            let adminText = encodeURIComponent("Саламатсызбы, Администратор! Мен Market.kg сайтындагы '" + productName + "' боюнча суроо берейин дегем.");
+            document.getElementById('adminWhatsappLink').href = "https://wa.me" + adminPhone + "?text=" + adminText;
+        });
+    </script>
+</body>
+</html>

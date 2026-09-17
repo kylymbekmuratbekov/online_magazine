@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сиздин Себетиңиз</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Жогорку Навбар -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">💻 MyShop</a>
+            <a href="/" class="btn btn-outline-light btn-sm">🏠 Башкы бетке кайт</a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h2 class="mb-4 fw-bold text-secondary">🛒 Сиздин Себетиңиз</h2>
+
+        {% if cart_items %}
+            <div class="row">
+                <!-- Товарлардын тизмеси -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 p-3 mb-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Товар</th>
+                                        <th>Баасы</th>
+                                        <th>Саны</th>
+                                        <th>Жалпы</th>
+                                        <th>Өчүрүү</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-middle">
+                                                    {% if item.product.image %}
+                                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: contain;" class="me-3">
+                                                    {% endif %}
+                                                    <span class="fw-bold">{{ item.product.name }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ item.product.price }} сом</td>
+                                            <td>{{ item.quantity }} даана</td>
+                                            <td class="fw-bold text-primary">{{ item.total_price }} сом</td>
+                                            <td>
+                                                <!-- Өчүрүү шилтемеси -->
+                                                <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-sm btn-outline-danger">❌</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Жалпы эсеп бөлүгү -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 p-4 bg-white">
+                        <h4 class="fw-bold mb-3">Жыйынтык:</h4>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Жалпы маалым:</span>
+                            <span class="fs-4 fw-bold text-danger">{{ total_cost }} сом</span>
+                        </div>
+                        <button class="btn btn-success w-100 py-2 fw-bold shadow-sm">Сатып алууну тариздөө</button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center my-5">
+                <p class="text-muted fs-4">Сиздин себетиңиз азырынча бош 😔</p>
+                <a href="/" class="btn btn-primary px-4 py-2 mt-2">Товарларды көрүү</a>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

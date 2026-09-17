@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жарыяны өзгөртүү — {{ product.name }}</title>
+    <link href="https://cloudflare.com" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #e0f2f1 0%, #f4f6f7 100%); font-family: -apple-system, sans-serif; min-height: 100vh; }
+        .navbar-market { background-color: #005f73; padding: 15px 0; }
+        .logo-text { color: #fff; font-weight: 800; font-size: 28px; text-decoration: none; }
+        .logo-text span { color: #ee9b00; }
+        .form-card { border: none; border-radius: 16px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.06); max-width: 600px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-market shadow-sm mb-5">
+        <div class="container">
+            <a class="logo-text" href="/">Market<span>.kg</span></a>
+            <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-light btn-sm fw-bold">← Арткы бетке</a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <div class="card form-card p-4 p-md-5">
+            <h3 class="fw-bold text-dark mb-3 text-center">✏️ Жарыяны оңдоо</h3>
+            <p class="text-center text-muted small mb-4">Категория: {{ product.category.name }}</p>
+
+            {% if error %}
+                <div class="alert alert-danger text-center fw-bold rounded-3 mb-4">{{ error }}</div>
+            {% endif %}
+
+            <form action="{% url 'edit_listing' product.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- 🚗 УНААЛАРДЫ ОҢДОО -->
+                {% if product.category.slug == 'transport' %}
+                    <div class="p-3 bg-light rounded-3 mb-4 border-start border-5 border-warning">
+                        <h6 class="fw-bold mb-3">🚗 Унаанын мүнөздөмөлөрү:</h6>
+                        <div class="mb-2"><input type="text" name="car_model" class="form-control" value="{{ product.dynamic_properties.Маркасы.Модели }}" placeholder="Toyota Camry"></div>
+                        <div class="mb-2"><input type="number" name="car_year" class="form-control" value="{{ product.dynamic_properties.Чыккан_жылы }}" placeholder="2018"></div>
+                        <div class="mb-2"><input type="text" name="car_engine" class="form-control" value="{{ product.dynamic_properties.Мотор_көлөмү }}" placeholder="2.5"></div>
+                        <div class="mb-2"><input type="number" name="car_mileage" class="form-control" value="{{ product.dynamic_properties.Пробег }}" placeholder="120000"></div>
+                    </div>
+                {% endif %}
+
+                <!-- 💼 ЖУМУШТАРДЫ ОҢДОО -->
+                {% if product.category.slug == 'kyzmat-korsotuu' %}
+                    <div class="p-3 bg-light rounded-3 mb-4 border-start border-5 border-warning">
+                        <h6 class="fw-bold mb-3">💼 Жумуш маалыматтары:</h6>
+                        <div class="mb-2"><input type="text" name="job_vacancy" class="form-control" value="{{ product.dynamic_properties.Кесиби_Кызмат_орду }}" placeholder="Айдоочу"></div>
+                        <div class="mb-2"><input type="text" name="job_experience" class="form-control" value="{{ product.dynamic_properties.Иш_тажрыйбасы }}" placeholder="3 жыл"></div>
+                        <div class="mb-2"><input type="text" name="job_schedule" class="form-control" value="{{ product.dynamic_properties.Иш_тартиби }}" placeholder="Полный день"></div>
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">Жарыянын аталышы:</label>
+                    <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">Баасы / Айлыгы (сом):</label>
+                    <input type="number" name="price" class="form-control" value="{{ product.price|floatformat:0 }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">Атыңыз:</label>
+                    <input type="text" name="seller_name" class="form-control" value="{{ product.seller_name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">Жайгашкан жери:</label>
+                    <input type="text" name="location" class="form-control" value="{{ product.location }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">Жаңы сүрөт тандаңыз (Өзгөртпөсөңүз бош калтырыңыз):</label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">Толук мүнөздөмөсү:</label>
+                    <textarea name="description" class="form-control" rows="4" required>{{ product.description }}</textarea>
+                </div>
+
+                <!-- КАТА КЕТПЕШИ ҮЧҮН КООПСУЗДУК ТЕЛЕФОНУН КАЙРА СУРОО -->
+                <div class="p-3 bg-light rounded-3 mb-4 border border-danger">
+                    <label class="form-label fw-bold text-danger small">⚠️ Ырастоо телефон номериңиз:</label>
+                    <input type="tel" name="check_phone" class="form-control" placeholder="Жарыяны кошкондогу номериңиз" required>
+                </div>
+
+                <button type="submit" class="btn btn-warning w-100 py-3 text-white fw-bold fs-5 shadow-sm">
+                    💾 Өзгөртүүлөрдү сактоо
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
