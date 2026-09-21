@@ -152,3 +152,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+
+# Башында мындай бош болушу мүмкүн:
+#ALLOWED_HOSTS = ['*']
+
+# Сиз аны төмөнкүдөй кылып өзгөртүңүз:
+ALLOWED_HOSTS = ['://onrender.com', '127.0.0.1', 'localhost']
+
