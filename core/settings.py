@@ -31,12 +31,21 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # ... мурунку жазуулар кала берет ...
+    # Стандарттык Django тиркемелери:
+    'django.contrib.admin',          # Бул сап бар экенин текшериңиз (же кошуңуз)
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.staticfiles',
-    'whitenoise.runserver_nostatic',  # ТАК УШУЛ САПТЫ КОШУҢУЗ
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Бул сапты так ушул жерге кошуңуз
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # ... калган саптар өзгөрүүсүз калат
+
+    # Сиздин тиркемеңиз:
     'shop',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
